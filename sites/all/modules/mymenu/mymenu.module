@@ -1,0 +1,67 @@
+<?php
+
+
+
+function mymenu_menu()
+{
+    $items["mymodule/form"] = array(
+        'title'=> 'Форма twitter',
+        'page callback' => 'render_page',
+        'access callback'=> TRUE,
+        'page arguments' => array(1),
+
+    );
+ $items['result'] = array(
+        'title' => 'tweet result',
+        'page callback' => 'result',
+        'access callback'=> TRUE,
+        'page arguments' => array(1),
+    );
+    return $items;
+}
+function render_page(){
+$form = drupal_get_form('my_first_form');
+$form = drupal_render($form); 
+	return $form;
+}
+function my_first_form($form, &$form_state){
+	$form=array();
+	$form['name'] = array(
+		'#type'	=> 'textfield',
+		'#title' => t('Ім’я'),
+		'#default_value' => t(''),
+	);
+	
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Отримати останнє повідомлення'),
+	);
+	return $form;
+}
+
+function my_first_form_submit($form, &$form_state){
+	 variable_set('name', $form_state['values']['username']);
+
+    $form_state['redirect'] = 'result';
+
+}
+
+function my_first_form_validate($form, &$form_state){
+	if(mb_strlen($form_state['values']['name'])==''){
+		form_set_error('name', t('Отсутствует'));
+	}
+	if(mb_strlen($form_state['values']['name'])<3){
+		form_set_error('name', t('Слишком короткое имя.'));
+	}
+}
+function result(){
+    $name = variable_get('name');
+
+    $tweets_result = file_get_contents("https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name={$name}&count=5");
+    if (($tweets_result!='[]') and ($tweets_result!='')){
+        $data = json_decode($tweets_result);}
+
+    else{
+            $data = "Такого користувача не існує або в нього не має твіттів.";
+        }
+    return theme('mymodul',array('data'=>$data));}

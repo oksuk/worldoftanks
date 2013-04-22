@@ -1,0 +1,5 @@
+<!-- start region -->
+<div class="region <?php print $classes; ?> <?php if($_SERVER['REQUEST_URI'] == '/?q=news')or($_SERVER['REQUEST_URI'] == '/?q=3')or($_SERVER['REQUEST_URI'] == '/?q=4')or($_SERVER['REQUEST_URI'] == '/?q=5')or($_SERVER['REQUEST_URI'] == '/?q=6')or($_SERVER['REQUEST_URI'] == '/?q=7'){echo 'category';}  or($_SERVER['REQUEST_URI'] == '/?q=1')or($_SERVER['REQUEST_URI'] == '/?q=2'){echo 'category';}  ?>">
+  <?php print $content; ?>
+</div>
+<!-- end region -->

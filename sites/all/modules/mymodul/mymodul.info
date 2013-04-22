@@ -1,0 +1,5 @@
+name=mymodul
+description=mydesc
+core=7.x
+files[] = mymodule.module
+version = "7.x-1.4"

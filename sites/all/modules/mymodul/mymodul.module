@@ -1,0 +1,79 @@
+<?php
+function mymodul_menu(){
+    $items["tweet"] = array(
+      "page callback"    => "main_function",
+      "title"            => "tweets",
+      "access arguments" => array('access content'),
+
+    );
+    $items['result'] = array(
+        'title' => 'tweet result',
+        'page callback' => 'result',
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+
+    );
+return $items;
+}
+
+
+function mymodul_form($form, &$form_state){
+    $form = array();
+    $form['username'] = array(
+        '#type'   => 'textfield',
+        '#title'  => t('Користувач'),
+    );
+    $form['submit'] = array(
+        '#type'  => 'submit',
+        '#value' => t('submit'),
+    );
+return $form;
+
+}
+
+function result(){
+    $name = variable_get('name');
+
+    $tweets_result = file_get_contents("https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name={$name}&count=5");
+    if (($tweets_result!='[]') and ($tweets_result!='')){
+        $data = json_decode($tweets_result);}
+
+    else{
+            $data = "Такого користувача не існує або в нього не має твіттів.";
+        }
+    return theme('mymodul',array('data'=>$data));
+}
+
+function main_function(){
+    $form = drupal_get_form('mymodul_form'); //отримуєм поля форми
+    $form = drupal_render($form); //рендерим форму
+    return $form;
+}
+
+function mymodul_form_submit($form, &$form_state){
+
+   variable_set('name', $form_state['values']['username']);
+
+    $form_state['redirect'] = 'result';
+}
+
+function mymodul_form_validate($form, &$form_state){
+    if($form_state['values']['username']==''){
+        form_set_error('username', t('Введіть будь ласка логін користувача.'));
+    }
+    if(!preg_match("/^[a-z0-9_]+$/i",$form_state['values']['username'])){
+        form_set_error('username', t('Ім’я повинне бути латинськими літерами або цифрами.'));
+    }
+
+}
+function mymodul_theme() {
+    return array(
+        'mymodul' => array(
+            // шлях до файла шаблона my_mod.tpl.php
+
+            'template' => 'mymodul',
+            // змінні які будуть доступні в шаблоні
+        )
+    );
+}
+

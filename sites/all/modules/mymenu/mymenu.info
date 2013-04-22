@@ -1,0 +1,5 @@
+name = mymenu
+description = Enables actions to be fired on certain system events, such as when new content is created.
+core = 7.x
+files[] = mymenu.module
+version = "7.x-1.4"
